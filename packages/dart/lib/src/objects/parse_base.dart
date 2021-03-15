@@ -1,21 +1,21 @@
 part of flutter_parse_sdk;
 
 abstract class ParseBase {
-  String parseClassName;
-  Type type;
+  String parseClassName = '';
+  Type? type;
   final bool _dirty = false; // reserved property
   final Map<String, dynamic> _unsavedChanges = Map<String, dynamic>();
   final Map<String, dynamic> _savingChanges = Map<String, dynamic>();
 
   /// Stores all the values of a class
-  Map<String, dynamic> _objectData = Map<String, dynamic>();
+  Map<String, dynamic>? _objectData = Map<String, dynamic>();
 
   /// Returns [String] objectId
-  String get objectId => get<String>(keyVarObjectId);
+  String? get objectId => get<String?>(keyVarObjectId);
 
-  set objectId(String objectId) => set<String>(keyVarObjectId, objectId);
+  set objectId(String? objectId) => set<String?>(keyVarObjectId, objectId);
 
-  bool isDirty({String key}) {
+  bool isDirty({String? key}) {
     if (key != null) {
       return _unsavedChanges[key] != null;
     }
@@ -46,26 +46,34 @@ abstract class ParseBase {
       if (value is ParseObject && value._areChildrenDirty(seenObjects)) {
         match = true;
       }
-      return false;
+      //return false;
     });
     return match;
   }
 
   /// Returns [DateTime] createdAt
-  DateTime get createdAt {
+  DateTime? get createdAt {
     if (get<dynamic>(keyVarCreatedAt) is String) {
-      final String dateAsString = get<String>(keyVarCreatedAt);
-      return _parseDateFormat.parse(dateAsString);
+      final String? dateAsString = get<String?>(keyVarCreatedAt)!;
+      if (dateAsString != null) {
+        return _parseDateFormat.parse(dateAsString);
+      } else {
+        return null;
+      }
     } else {
       return get<DateTime>(keyVarCreatedAt);
     }
   }
 
   /// Returns [DateTime] updatedAt
-  DateTime get updatedAt {
+  DateTime? get updatedAt {
     if (get<dynamic>(keyVarUpdatedAt) is String) {
-      final String dateAsString = get<String>(keyVarUpdatedAt);
-      return _parseDateFormat.parse(dateAsString);
+      final String? dateAsString = get<String?>(keyVarUpdatedAt)!;
+      if (dateAsString != null) {
+        return _parseDateFormat.parse(dateAsString);
+      } else {
+        return null;
+      }
     } else {
       return get<DateTime>(keyVarUpdatedAt);
     }
@@ -74,7 +82,7 @@ abstract class ParseBase {
   /// Converts object to [String] in JSON format
   @protected
   Map<String, dynamic> toJson({
-    bool full,
+    bool? full,
     bool forApiRQ = false,
     bool allowCustomObjectId = false,
   }) {
@@ -87,11 +95,11 @@ abstract class ParseBase {
     }
 
     if (createdAt != null) {
-      map[keyVarCreatedAt] = _parseDateFormat.format(createdAt);
+      map[keyVarCreatedAt] = _parseDateFormat.format(createdAt!);
     }
 
     if (updatedAt != null) {
-      map[keyVarUpdatedAt] = _parseDateFormat.format(updatedAt);
+      map[keyVarUpdatedAt] = _parseDateFormat.format(updatedAt!);
     }
 
     final Map<String, dynamic> target =
@@ -120,11 +128,10 @@ abstract class ParseBase {
   @override
   String toString() => json.encode(toJson());
 
-  dynamic fromJson(Map<String, dynamic> objectData) {
+  dynamic fromJson(Map<String, dynamic>? objectData) {
     if (objectData == null) {
       return this;
     }
-
     objectData.forEach((String key, dynamic value) {
       if (key == parseClassName || key == '__type') {
         // NO OP
@@ -158,7 +165,7 @@ abstract class ParseBase {
 
   /// Sets all the objects variables
   @protected
-  void _setObjectData(Map<String, dynamic> objectData) =>
+  void _setObjectData(Map<String, dynamic>? objectData) =>
       _objectData = objectData;
 
   /// Returns the objects variables
@@ -174,11 +181,11 @@ abstract class ParseBase {
     return _getObjectData().containsKey(key);
   }
 
-  dynamic operator [](Object key) {
-    return get<dynamic>(key);
+  dynamic? operator [](Object key) {
+    return get<dynamic?>(key.toString());
   }
 
-  void operator []=(String key, dynamic value) {
+  void operator []=(String key, dynamic? value) {
     set<dynamic>(key, value);
   }
 
@@ -197,33 +204,17 @@ abstract class ParseBase {
   /// To set an int, call setType<int> and an int will be saved
   /// [bool] forceUpdate is always true, if unsure as to whether an item is
   /// needed or not, set to false
-  void set<T>(String key, T value, {bool forceUpdate = true}) {
-    if (value != null) {
-      if (_getObjectData().containsKey(key)) {
-        if (_getObjectData()[key] == value && !forceUpdate) {
-          return;
-        }
-        _getObjectData()[key] =
-            ParseMergeTool().mergeWithPrevious(_unsavedChanges[key], value);
-      } else {
-        _getObjectData()[key] = value;
+  void set<T>(String key, T? value, {bool forceUpdate = true}) {
+    if (_getObjectData().containsKey(key)) {
+      if (_getObjectData()[key] == value && !forceUpdate) {
+        return;
       }
-      _unsavedChanges[key] = _getObjectData()[key];
-    }
-  }
-
-  ///Set the [ParseACL] governing this object.
-  void setACL<ParseACL>(ParseACL acl) {
-    set(keyVarAcl, acl);
-  }
-
-  ///Access the [ParseACL] governing this object.
-  ParseACL getACL() {
-    if (_getObjectData().containsKey(keyVarAcl)) {
-      return _getObjectData()[keyVarAcl];
+      _getObjectData()[key] =
+          ParseMergeTool().mergeWithPrevious(_unsavedChanges[key], value);
     } else {
-      return ParseACL();
+      _getObjectData()[key] = value;
     }
+    _unsavedChanges[key] = _getObjectData()[key];
   }
 
   /// Gets type [T] from objectData
@@ -231,7 +222,7 @@ abstract class ParseBase {
   /// Returns null or [defaultValue] if provided. To get an int, call
   /// getType<int> and an int will be returned, null, or a defaultValue if
   /// provided
-  T get<T>(String key, {T defaultValue}) {
+  T? get<T>(String key, {T? defaultValue}) {
     if (_getObjectData().containsKey(key)) {
       if (T != null && _getObjectData()[key] is T) {
         final T data = _getObjectData()[key];
@@ -252,7 +243,7 @@ abstract class ParseBase {
       await unpin();
       final Map<String, dynamic> objectMap = parseEncode(this, full: true);
       final String json = jsonEncode(objectMap);
-      await ParseCoreData().getStore().setString(objectId, json);
+      await ParseCoreData().getStore().setString(objectId!, json);
       return true;
     } else {
       return false;
@@ -262,9 +253,9 @@ abstract class ParseBase {
   /// Saves item to simple key pair value storage
   ///
   /// Replicates Android SDK pin process and saves object to storage
-  Future<bool> unpin({String key}) async {
+  Future<bool> unpin({String? key}) async {
     if (objectId != null) {
-      await ParseCoreData().getStore().remove(key ?? objectId);
+      await ParseCoreData().getStore().remove(key ?? objectId!);
       return true;
     }
 
@@ -274,10 +265,10 @@ abstract class ParseBase {
   /// Saves item to simple key pair value storage
   ///
   /// Replicates Android SDK pin process and saves object to storage
-  dynamic fromPin(String objectId) async {
+  dynamic fromPin(String? objectId) async {
     if (objectId != null) {
       final CoreStore coreStore = ParseCoreData().getStore();
-      final String itemFromStore = await coreStore.getString(objectId);
+      final String? itemFromStore = await coreStore.getString(objectId);
 
       if (itemFromStore != null) {
         return fromJson(json.decode(itemFromStore));
@@ -286,11 +277,25 @@ abstract class ParseBase {
     return null;
   }
 
-  Map<String, dynamic> toPointer() => encodeObject(parseClassName, objectId);
+  Map<String, dynamic> toPointer() => encodeObject(parseClassName, objectId!);
+
+  ///Set the [ParseACL] governing this object.
+  void setACL<ParseACL>(ParseACL acl) {
+    set(keyVarAcl, acl);
+  }
+
+  ///Access the [ParseACL] governing this object.
+  ParseACL getACL() {
+    if (_getObjectData().containsKey(keyVarAcl)) {
+      return _getObjectData()[keyVarAcl];
+    } else {
+      return ParseACL();
+    }
+  }
 
   /// Deprecated
   @Deprecated('Prefer to use parseClassName')
-  String className;
+  String className = '';
 
   @Deprecated('Prefer to use parseClassName')
   String getClassName() => parseClassName;

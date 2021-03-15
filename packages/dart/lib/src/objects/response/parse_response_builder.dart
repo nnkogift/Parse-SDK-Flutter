@@ -9,14 +9,15 @@ part of flutter_parse_sdk;
 /// 4. Success with results. Again [ParseResponse()] is returned
 class _ParseResponseBuilder {
   ParseResponse handleResponse<T>(
-      dynamic object, ParseNetworkResponse apiResponse, ParseApiRQ type) {
+      dynamic object, ParseNetworkResponse? apiResponse, ParseApiRQ type) {
     final ParseResponse parseResponse = ParseResponse();
     final bool returnAsResult = shouldReturnAsABaseResult(type);
+
     if (apiResponse != null) {
       parseResponse.statusCode = apiResponse.statusCode;
 
       if (isUnsuccessfulResponse(apiResponse)) {
-        return buildErrorResponse(parseResponse, apiResponse);
+        return buildErrorResponse(parseResponse, apiResponse)!;
       } else if (isHealthCheck(apiResponse)) {
         parseResponse.success = true;
         return parseResponse;
@@ -70,23 +71,23 @@ class _ParseResponseBuilder {
       final List<dynamic> list = result;
       if (object is List && object.length == list.length) {
         response.count = object.length;
-        response.results = List<dynamic>();
+        response.results = <dynamic>[];
         for (int i = 0; i < object.length; i++) {
           final Map<String, dynamic> objectResult = list[i];
           if (objectResult.containsKey('success')) {
             final T item = _handleSingleResult<T>(
-                object[i], objectResult['success'], false);
-            response.results.add(item);
+                object[i], objectResult['success'], false)!;
+            response.results!.add(item);
           } else {
             final ParseError error = ParseError(
-                code: objectResult[keyCode],
+                code: objectResult[keyError][keyCode],
                 message: objectResult[keyError].toString());
-            response.results.add(error);
+            response.results!.add(error);
           }
         }
       }
     } else if (result is Map) {
-      final Map<String, dynamic> map = result;
+      final Map<String, dynamic>? map = Map<String, dynamic>.from(result);
       if (object is Parse) {
         response.result = map;
       } else if (map != null && map.length == 1 && map.containsKey('results')) {
@@ -107,7 +108,7 @@ class _ParseResponseBuilder {
         response.result = results;
         response.count = map['count'];
       } else {
-        final T item = _handleSingleResult<T>(object, map, false);
+        final T item = _handleSingleResult<T>(object, map!, false)!;
         response.count = 1;
         response.result = item;
         response.results = <T>[item];
@@ -119,15 +120,15 @@ class _ParseResponseBuilder {
 
   /// Handles a response with a multiple result object
   List<T> _handleMultipleResults<T>(T object, List<dynamic> data) {
-    final List<T> resultsList = List<T>();
+    final List<T> resultsList = <T>[];
     for (dynamic value in data) {
-      resultsList.add(_handleSingleResult<T>(object, value, true));
+      resultsList.add(_handleSingleResult<T>(object, value, true)!);
     }
     return resultsList;
   }
 
   /// Handles a response with a single result object
-  T _handleSingleResult<T>(
+  T? _handleSingleResult<T>(
       T object, Map<String, dynamic> map, bool createNewObject) {
     if (createNewObject && object is ParseCloneable) {
       return object.clone(map);

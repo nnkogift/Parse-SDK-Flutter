@@ -7,7 +7,7 @@ class _XXTeaEncoder extends Converter<Map<String, dynamic>, String> {
 
   @override
   String convert(Map<String, dynamic> input) =>
-      xxtea.encryptToString(json.encode(input), key);
+      xxtea.encryptToString(json.encode(input), key)!;
 }
 
 class _XXTeaDecoder extends Converter<String, Map<String, dynamic>> {
@@ -17,7 +17,7 @@ class _XXTeaDecoder extends Converter<String, Map<String, dynamic>> {
 
   @override
   Map<String, dynamic> convert(String input) {
-    final dynamic result = json.decode(xxtea.decryptToString(input, key));
+    final dynamic result = json.decode(xxtea.decryptToString(input, key)!);
     if (result is Map) {
       return result.cast<String, dynamic>();
     }
@@ -34,14 +34,14 @@ class _XXTeaCodec extends Codec<Map<String, dynamic>, String> {
     _decoder = _XXTeaDecoder(password);
   }
 
-  _XXTeaEncoder _encoder;
-  _XXTeaDecoder _decoder;
+  _XXTeaEncoder? _encoder;
+  _XXTeaDecoder? _decoder;
 
   @override
-  Converter<String, Map<String, dynamic>> get decoder => _decoder;
+  Converter<String, Map<String, dynamic>> get decoder => _decoder!;
 
   @override
-  Converter<Map<String, dynamic>, String> get encoder => _encoder;
+  Converter<Map<String, dynamic>, String> get encoder => _encoder!;
 }
 
 /// Create a codec to use when opening an encrypted sembast database
@@ -56,5 +56,5 @@ class _XXTeaCodec extends Codec<Map<String, dynamic>, String> {
 ///
 /// // ...your database is ready to use as encrypted
 /// ```
-SembastCodec getXXTeaSembastCodec({@required String password}) =>
+SembastCodec getXXTeaSembastCodec({required String password}) =>
     SembastCodec(signature: 'xxtea', codec: _XXTeaCodec(password));

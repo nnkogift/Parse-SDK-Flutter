@@ -17,13 +17,13 @@ void logAPIResponse(
       responseString += '\nReponse: OK';
     }
   } else if (!parseResponse.success) {
-    responseString += '\nStatus Code: ${parseResponse.error.code}';
-    responseString += '\nType: ${parseResponse.error.type}';
+    responseString += '\nStatus Code: ${parseResponse.error!.code}';
+    responseString += '\nType: ${parseResponse.error!.type}';
 
     final String errorOrException =
-        parseResponse.error.exception != null ? 'Exception' : 'Error';
+        parseResponse.error!.exception != null ? 'Exception' : 'Error';
 
-    responseString += '\n$errorOrException: ${parseResponse.error.message}';
+    responseString += '\n$errorOrException: ${parseResponse.error!.message}';
   }
 
   responseString += '\n╰-- \n';

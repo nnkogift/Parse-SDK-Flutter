@@ -9,17 +9,15 @@ class QueryBuilder<T extends ParseObject> {
       : this(ParseCoreData.instance.createObject(classname));
 
   QueryBuilder.or(this.object, List<QueryBuilder<T>> list) {
-    if (list != null) {
-      String query = '"\$or":[';
-      for (int i = 0; i < list.length; ++i) {
-        if (i > 0) {
-          query += ',';
-        }
-        query += '{' + list[i].buildQueries(list[i].queries) + '}';
+    String query = '"\$or":[';
+    for (int i = 0; i < list.length; ++i) {
+      if (i > 0) {
+        query += ',';
       }
-      query += ']';
-      queries.add(MapEntry<String, dynamic>(_NO_OPERATOR_NEEDED, query));
+      query += '{' + list[i].buildQueries(list[i].queries) + '}';
     }
+    query += ']';
+    queries.add(MapEntry<String, dynamic>(_NO_OPERATOR_NEEDED, query));
   }
 
   QueryBuilder.copy(QueryBuilder<T> query) {
@@ -35,7 +33,7 @@ class QueryBuilder<T extends ParseObject> {
   static const String _NO_OPERATOR_NEEDED = 'NO_OP';
   static const String _SINGLE_QUERY = 'SINGLE_QUERY';
 
-  T object;
+  ParseObject? object;
   List<MapEntry<String, dynamic>> queries = <MapEntry<String, dynamic>>[];
   final Map<String, dynamic> limiters = Map<String, dynamic>();
 
@@ -289,7 +287,7 @@ class QueryBuilder<T extends ParseObject> {
   // ignore: always_specify_types
   void whereMatchesQuery(String column, QueryBuilder query) {
     final String inQuery =
-        query._buildQueryRelational(query.object.parseClassName);
+        query._buildQueryRelational(query.object!.parseClassName);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$inQuery\":$inQuery}'));
@@ -299,7 +297,7 @@ class QueryBuilder<T extends ParseObject> {
   // ignore: always_specify_types
   void whereDoesNotMatchQuery(String column, QueryBuilder query) {
     final String inQuery =
-        query._buildQueryRelational(query.object.parseClassName);
+        query._buildQueryRelational(query.object!.parseClassName);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$notInQuery\":$inQuery}'));
@@ -308,7 +306,7 @@ class QueryBuilder<T extends ParseObject> {
   // Add a constraint to the query that requires a particular key's value matches a value for a key in the results of another ParseQuery.
   // ignore: always_specify_types
   void whereMatchesKeyInQuery(
-      String column, String keyInQuery, QueryBuilder query) {
+      String column, String keyInQuery, QueryBuilder<T> query) {
     if (query.queries.isEmpty) {
       throw ArgumentError('query conditions is required');
     }
@@ -319,8 +317,8 @@ class QueryBuilder<T extends ParseObject> {
       throw ArgumentError('include is not allowed');
     }
 
-    final String inQuery =
-        query._buildQueryRelationalKey(query.object.parseClassName, keyInQuery);
+    final String inQuery = query._buildQueryRelationalKey(
+        query.object!.parseClassName, keyInQuery);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$select\":$inQuery}'));
@@ -329,7 +327,7 @@ class QueryBuilder<T extends ParseObject> {
   // Add a constraint to the query that requires a particular key's value does not match any value for a key in the results of another ParseQuery
   // ignore: always_specify_types
   void whereDoesNotMatchKeyInQuery(
-      String column, String keyInQuery, QueryBuilder query) {
+      String column, String keyInQuery, QueryBuilder<T> query) {
     if (query.queries.isEmpty) {
       throw ArgumentError('query conditions is required');
     }
@@ -340,8 +338,8 @@ class QueryBuilder<T extends ParseObject> {
       throw ArgumentError('include is not allowed');
     }
 
-    final String inQuery =
-        query._buildQueryRelationalKey(query.object.parseClassName, keyInQuery);
+    final String inQuery = query._buildQueryRelationalKey(
+        query.object!.parseClassName, keyInQuery);
 
     queries.add(MapEntry<String, dynamic>(
         _SINGLE_QUERY, '\"$column\":{\"\$dontSelect\":$inQuery}'));
@@ -351,8 +349,8 @@ class QueryBuilder<T extends ParseObject> {
   ///
   /// Make sure to call this after defining your queries
   Future<ParseResponse> query<T extends ParseObject>(
-      {ProgressCallback progressCallback}) async {
-    return object.query<T>(
+      {ProgressCallback? progressCallback}) async {
+    return object!.query<T>(
       buildQuery(),
       progressCallback: progressCallback,
     );
@@ -361,12 +359,12 @@ class QueryBuilder<T extends ParseObject> {
   Future<ParseResponse> distinct<T extends ParseObject>(
       String className) async {
     final String queryString = 'distinct=$className';
-    return object.distinct<T>(queryString);
+    return object!.distinct<T>(queryString);
   }
 
   ///Counts the number of objects that match this query
   Future<ParseResponse> count() async {
-    return object.query(_buildQueryCount());
+    return object!.query(_buildQueryCount());
   }
 
   /// Builds the query for Parse
@@ -449,9 +447,8 @@ class QueryBuilder<T extends ParseObject> {
   /// age < 20, this would be similar to age > 10 < 20
   List<MapEntry<String, dynamic>> _checkForMultipleColumnInstances(
       List<MapEntry<String, dynamic>> queries) {
-    final List<MapEntry<String, dynamic>> sanitizedQueries =
-        List<MapEntry<String, dynamic>>();
-    final List<String> keysAlreadyCompacted = List<String>();
+    final List<MapEntry<String, dynamic>> sanitizedQueries = <MapEntry<String, dynamic>>[];
+    final List<String> keysAlreadyCompacted = <String>[];
 
     // Run through each query
     for (final MapEntry<String, dynamic> query in queries) {
@@ -502,7 +499,7 @@ class QueryBuilder<T extends ParseObject> {
   String getLimiters(Map<String, dynamic> map) {
     String result = '';
     map.forEach((String key, dynamic value) {
-      if (result != null) {
+      if (result.isNotEmpty) {
         result = result + '&$key=$value';
       } else {
         result = '&$key=$value';
@@ -515,7 +512,7 @@ class QueryBuilder<T extends ParseObject> {
   String getLimitersRelational(Map<String, dynamic> map) {
     String result = '';
     map.forEach((String key, dynamic value) {
-      if (result != null) {
+      if (result.isNotEmpty) {
         result = result + ',\"$key":$value';
       } else {
         result = '\"$key\":$value';

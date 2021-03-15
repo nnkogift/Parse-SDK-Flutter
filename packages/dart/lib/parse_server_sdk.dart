@@ -67,7 +67,7 @@ part 'src/utils/parse_login_helpers.dart';
 part 'src/utils/parse_utils.dart';
 
 class Parse {
-  ParseCoreData data;
+  ParseCoreData? data;
   bool _hasBeenInitialized = false;
 
   /// To initialize Parse Server in your application
@@ -86,25 +86,25 @@ class Parse {
     String appId,
     String serverUrl, {
     bool debug = false,
-    String appName,
-    String appVersion,
-    String appPackageName,
-    String locale,
-    String liveQueryUrl,
-    String clientKey,
-    String masterKey,
-    String sessionId,
+    String appName = '',
+    String appVersion = '',
+    String appPackageName = '',
+    String locale = '',
+    String liveQueryUrl = '',
+    String clientKey = '',
+    String masterKey = '',
+    String sessionId = '',
     bool autoSendSessionId = true,
-    SecurityContext securityContext,
-    CoreStore coreStore,
-    Map<String, ParseObjectConstructor> registeredSubClassMap,
-    ParseUserConstructor parseUserConstructor,
-    ParseFileConstructor parseFileConstructor,
-    List<int> liveListRetryIntervals,
-    ParseConnectivityProvider connectivityProvider,
-    String fileDirectory,
-    Stream<void> appResumedStream,
-    ParseClientCreator clientCreator,
+    SecurityContext? securityContext,
+    CoreStore? coreStore,
+    Map<String, ParseObjectConstructor>? registeredSubClassMap,
+    ParseUserConstructor? parseUserConstructor,
+    ParseFileConstructor? parseFileConstructor,
+    List<int>? liveListRetryIntervals,
+    ParseConnectivityProvider? connectivityProvider,
+    String fileDirectory = '',
+    Stream<void>? appResumedStream,
+    ParseClientCreator? clientCreator,
   }) async {
     final String url = removeTrailingSlash(serverUrl);
 
@@ -141,7 +141,7 @@ class Parse {
   bool hasParseBeenInitialized() => _hasBeenInitialized;
 
   Future<ParseResponse> healthCheck(
-      {bool debug, ParseClient client, bool sendSessionIdByDefault}) async {
+      {bool? debug, ParseClient? client, bool? sendSessionIdByDefault}) async {
     ParseResponse parseResponse;
 
     final bool _debug = isDebugEnabled(objectLevelDebug: debug);

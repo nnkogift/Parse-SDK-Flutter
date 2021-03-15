@@ -17,7 +17,7 @@ Map<String, dynamic> _convertJSONObjectToMap(Map<String, dynamic> object) {
 }
 
 /// Decode any type value
-dynamic parseDecode(dynamic value) {
+dynamic? parseDecode(dynamic? value) {
   if (value is List) {
     return _convertJSONArrayToList(value);
   }
@@ -42,7 +42,7 @@ dynamic parseDecode(dynamic value) {
     return value;
   }
 
-  final Map<String, dynamic> map = value;
+  final Map<String, dynamic> map = Map<String, dynamic>.from(value);
 
   if (!map.containsKey('__type') && !map.containsKey('className')) {
     return _convertJSONObjectToMap(map);
@@ -71,8 +71,12 @@ dynamic parseDecode(dynamic value) {
         return ParseGeoPoint(
             latitude: latitude.toDouble(), longitude: longitude.toDouble());
       case 'Relation':
-        // ignore: always_specify_types
-        return ParseRelation().fromJson(map);
+        //RSM: TODO: Check logic to load Json from Relation
+        //print('Relation');
+        //print(map);
+        //print(map.values);
+        //return ParseRelation().fromJson(map);
+        return null;
     }
   }
 

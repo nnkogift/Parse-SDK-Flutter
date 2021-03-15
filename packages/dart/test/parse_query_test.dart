@@ -27,11 +27,11 @@ void main() {
           QueryBuilder<ParseObject>(ParseObject('_User', client: client));
       queryBuilder.whereRelatedTo('likes', 'Post', '8TOXdXf3tz');
 
-      when(client.data).thenReturn(ParseCoreData());
+//      when(client.data).thenReturn(ParseCoreData());
       await queryBuilder.query();
 
       final Uri result =
-          Uri.parse(verify(client.get(captureAny)).captured.single);
+          Uri.parse(verify(client.get(captureAny!)).captured.single);
 
       expect(result.path, '/classes/_User');
 

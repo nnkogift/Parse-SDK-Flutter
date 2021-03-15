@@ -2,8 +2,8 @@ part of flutter_parse_sdk_flutter;
 
 class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
   const ParseLiveGridWidget({
-    Key key,
-    @required this.query,
+    Key? key,
+    required this.query,
     this.gridLoadingElement,
     this.queryEmptyElement,
     this.duration = const Duration(milliseconds: 300),
@@ -28,28 +28,28 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
   }) : super(key: key);
 
   final sdk.QueryBuilder<T> query;
-  final Widget gridLoadingElement;
-  final Widget queryEmptyElement;
+  final Widget? gridLoadingElement;
+  final Widget? queryEmptyElement;
   final Duration duration;
-  final ScrollPhysics scrollPhysics;
-  final ScrollController scrollController;
+  final ScrollPhysics? scrollPhysics;
+  final ScrollController? scrollController;
 
   final Axis scrollDirection;
-  final EdgeInsetsGeometry padding;
-  final bool primary;
+  final EdgeInsetsGeometry? padding;
+  final bool? primary;
   final bool reverse;
   final bool shrinkWrap;
 
-  final ChildBuilder<T> childBuilder;
-  final ChildBuilder<T> removedItemBuilder;
+  final ChildBuilder<T>? childBuilder;
+  final ChildBuilder<T>? removedItemBuilder;
 
-  final bool listenOnAllSubItems;
-  final List<String> listeningIncludes;
+  final bool? listenOnAllSubItems;
+  final List<String>? listeningIncludes;
 
   final bool lazyLoading;
-  final List<String> preloadedColumns;
+  final List<String>? preloadedColumns;
 
-  final AnimationController animationController;
+  final AnimationController? animationController;
 
   final int crossAxisCount;
   final double crossAxisSpacing;
@@ -60,10 +60,10 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
   _ParseLiveGridWidgetState<T> createState() => _ParseLiveGridWidgetState<T>(
         query: query,
         removedItemBuilder: removedItemBuilder,
-        listenOnAllSubItems: listenOnAllSubItems,
-        listeningIncludes: listeningIncludes,
+        listenOnAllSubItems: listenOnAllSubItems!,
+        listeningIncludes: listeningIncludes!,
         lazyLoading: lazyLoading,
-        preloadedColumns: preloadedColumns,
+        preloadedColumns: preloadedColumns!,
       );
 
   static Widget defaultChildBuilder<T extends sdk.ParseObject>(
@@ -74,7 +74,7 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
     } else if (snapshot.hasData) {
       child = ListTile(
         title: Text(
-          snapshot.loadedData.get(sdk.keyVarObjectId),
+          snapshot.loadedData!.get(sdk.keyVarObjectId)!,
         ),
       );
     } else {
@@ -89,14 +89,14 @@ class ParseLiveGridWidget<T extends sdk.ParseObject> extends StatefulWidget {
 class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     extends State<ParseLiveGridWidget<T>> {
   _ParseLiveGridWidgetState(
-      {@required this.query,
-      @required this.removedItemBuilder,
-      bool listenOnAllSubItems,
-      List<String> listeningIncludes,
+      {required this.query,
+      required this.removedItemBuilder,
+      bool? listenOnAllSubItems,
+      List<String>? listeningIncludes,
       bool lazyLoading = true,
-      List<String> preloadedColumns}) {
+      List<String> preloadedColumns = const <String>[]}) {
     sdk.ParseLiveList.create(
-      query,
+      query!,
       listenOnAllSubItems: listenOnAllSubItems,
       listeningIncludes: listeningIncludes,
       lazyLoading: lazyLoading,
@@ -113,7 +113,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       }
       setState(() {
         _liveGrid = value;
-        _liveGrid.stream
+        _liveGrid!.stream
             .listen((sdk.ParseLiveListEvent<sdk.ParseObject> event) {
           if (mounted) {
             setState(() {});
@@ -123,11 +123,9 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
     });
   }
 
-  final sdk.QueryBuilder<T> query;
-  sdk.ParseLiveList<T> _liveGrid;
-  final GlobalKey<AnimatedListState> _animatedListKey =
-      GlobalKey<AnimatedListState>();
-  final ChildBuilder<T> removedItemBuilder;
+  final sdk.QueryBuilder<T>? query;
+  sdk.ParseLiveList<T>? _liveGrid;
+  final ChildBuilder<T>? removedItemBuilder;
   bool noData = false;
 
   @override
@@ -147,14 +145,13 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
   }
 
   Widget buildAnimatedGrid() {
-    AnimationController controller;
     Animation<double> boxAnimation;
     boxAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(
       CurvedAnimation(
-        parent: widget.animationController,
+        parent: widget.animationController!,
         curve: const Interval(
           0,
           0.5,
@@ -163,7 +160,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       ),
     );
     return GridView.builder(
-        itemCount: _liveGrid?.size,
+        itemCount: _liveGrid!.size,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: widget.crossAxisCount,
             crossAxisSpacing: widget.crossAxisSpacing,
@@ -174,11 +171,10 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
           int index,
         ) {
           return ParseLiveListElementWidget<T>(
-            key: ValueKey<String>(
-                _liveGrid?.getIdentifier(index) ?? '_NotFound'),
-            stream: () => _liveGrid?.getAt(index),
-            loadedData: () => _liveGrid?.getLoadedAt(index),
-            preLoadedData: () => _liveGrid?.getPreLoadedAt(index),
+            key: ValueKey<String>(_liveGrid!.getIdentifier(index)),
+            stream: () => _liveGrid!.getAt(index),
+            loadedData: () => _liveGrid!.getLoadedAt(index)!,
+            preLoadedData: () => _liveGrid!.getPreLoadedAt(index)!,
             sizeFactor: boxAnimation,
             duration: widget.duration,
             childBuilder:
@@ -189,7 +185,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
 
   @override
   void dispose() {
-    _liveGrid?.dispose();
+    _liveGrid!.dispose();
     _liveGrid = null;
     super.dispose();
   }

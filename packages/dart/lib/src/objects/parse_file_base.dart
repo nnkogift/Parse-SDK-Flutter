@@ -5,11 +5,11 @@ abstract class ParseFileBase extends ParseObject {
   ///
   /// {https://docs.parseplatform.org/rest/guide/#files/}
   ParseFileBase(
-      {@required String name,
-      String url,
-      bool debug,
-      ParseClient client,
-      bool autoSendSessionId})
+      {required String name,
+      String url = '',
+      bool? debug,
+      ParseClient? client,
+      bool? autoSendSessionId})
       : super(keyFileClassname,
             debug: debug,
             autoSendSessionId: autoSendSessionId,
@@ -19,17 +19,17 @@ abstract class ParseFileBase extends ParseObject {
     this.url = url;
   }
 
-  String get name => super.get<String>(keyVarName);
+  String get name => super.get<String>(keyVarName)!;
   set name(String name) => set<String>(keyVarName, name);
 
-  String get url => super.get<String>(keyVarURL);
+  String get url => super.get<String>(keyVarURL)!;
   set url(String url) => set<String>(keyVarURL, url);
 
-  bool get saved => url != null;
+  bool get saved => url.isNotEmpty;
 
   @override
   Map<String, dynamic> toJson({
-    bool full = false,
+    bool? full,
     bool forApiRQ = false,
     bool allowCustomObjectId = false,
   }) =>

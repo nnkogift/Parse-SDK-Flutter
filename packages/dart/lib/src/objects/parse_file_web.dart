@@ -2,11 +2,11 @@ part of flutter_parse_sdk;
 
 class ParseWebFile extends ParseFileBase {
   ParseWebFile(this.file,
-      {@required String name,
-      String url,
-      bool debug,
-      ParseClient client,
-      bool autoSendSessionId})
+      {String name = '',
+      String url = '',
+      bool? debug = false,
+      ParseClient? client,
+      bool? autoSendSessionId})
       : super(
           name: name,
           url: url,
@@ -15,25 +15,25 @@ class ParseWebFile extends ParseFileBase {
           autoSendSessionId: autoSendSessionId,
         );
 
-  Uint8List file;
+  Uint8List? file;
 
   @override
-  Future<ParseWebFile> download({ProgressCallback progressCallback}) async {
-    if (url == null) {
+  Future<ParseWebFile> download({ProgressCallback? progressCallback}) async {
+    if (url.isNotEmpty) {
       return this;
     }
 
-    final ParseNetworkByteResponse response = await _client.getBytes(
+    final ParseNetworkByteResponse response = await _client!.getBytes(
       url,
       onReceiveProgress: progressCallback,
     );
-    file = response.bytes;
+    file = Uint8List.fromList(response.bytes!);
 
     return this;
   }
 
   @override
-  Future<ParseResponse> upload({ProgressCallback progressCallback}) async {
+  Future<ParseResponse> upload({ProgressCallback? progressCallback}) async {
     if (saved) {
       //Creates a Fake Response to return the correct result
       final Map<String, String> response = <String, String>{
@@ -50,14 +50,14 @@ class ParseWebFile extends ParseFileBase {
 
     final Map<String, String> headers = <String, String>{
       HttpHeaders.contentTypeHeader:
-          mime(url ?? name) ?? 'application/octet-stream',
+          mime(url.isEmpty ? name : url) ?? 'application/octet-stream',
     };
     try {
       final String uri = ParseCoreData().serverUrl + '$_path';
-      final ParseNetworkResponse response = await _client.postBytes(
+      final ParseNetworkResponse response = await _client!.postBytes(
         uri,
         options: ParseNetworkOptions(headers: headers),
-        data: Stream<List<int>>.fromIterable(<List<int>>[file]),
+        data: Stream<List<int>>.fromIterable(<List<int>>[file!]),
         onSendProgress: progressCallback,
       );
       if (response.statusCode == 201) {

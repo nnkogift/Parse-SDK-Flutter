@@ -8,11 +8,11 @@ class ParseResponse {
   ///
   /// This is now deprecated - Please use results. This will contain a list of
   /// results, no need to check if its a list or a list of elements anymore.
-  dynamic result;
+  dynamic? result;
 
   /// All results stored as a list - Even if only one response is returned
   // ignore: always_specify_types
-  List results;
+  List? results;
   int count = 0;
-  ParseError error;
+  ParseError? error;
 }

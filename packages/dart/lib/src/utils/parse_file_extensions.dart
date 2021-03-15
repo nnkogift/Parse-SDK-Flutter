@@ -4,7 +4,7 @@ part of flutter_parse_sdk;
 
 /// Get the extension type of the file
 @deprecated
-String getExtension(String contentType) {
+String? getExtension(String contentType) {
   if (_extensions.containsKey(contentType) &&
       _extensions[contentType].containsKey('extensions')) {
     return _extensions[contentType]['extensions'].first;
@@ -20,7 +20,7 @@ String getContentType(String extension) {
     extension = extension.substring(extension.lastIndexOf('.') + 1);
   }
 
-  String contentType = extensions[extension.toLowerCase()];
+  String? contentType = extensions[extension.toLowerCase()];
 
   contentType ??= 'application/octet-stream';
 
@@ -32,7 +32,7 @@ String getContentType(String extension) {
 Map<String, dynamic> _queryExtensions() {
   Map<String, dynamic> extensions = Map<String, dynamic>();
 
-  if (extensions == null) {
+  if (extensions.isEmpty) {
     extensions = <String, dynamic>{};
     _extensions.forEach((dynamic type, dynamic typeInfo) {
       if (typeInfo.containsKey('extensions')) {

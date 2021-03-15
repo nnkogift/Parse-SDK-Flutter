@@ -9,8 +9,12 @@ dynamic dateTimeEncoder(dynamic item) {
 }
 
 /// Custom json encoder for types related to parse
-dynamic parseEncode(dynamic value, {bool full}) {
+dynamic? parseEncode(dynamic? value, {bool? full}) {
   full ??= false;
+
+  if (value == null) {
+    return null;
+  }
 
   if (value is Uint8List) {
     return _encodeUint8List(value);
@@ -46,9 +50,9 @@ dynamic parseEncode(dynamic value, {bool full}) {
 
   if (value is ParseObject || value is ParseUser) {
     if (full) {
-      return value.toJson(full: full);
+      return value!.toJson(full: full);
     } else {
-      return value.toPointer();
+      return value!.toPointer();
     }
   }
 

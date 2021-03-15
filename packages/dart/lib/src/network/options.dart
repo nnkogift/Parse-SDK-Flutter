@@ -1,9 +1,9 @@
 part of flutter_parse_sdk;
 
 class ParseNetworkOptions {
-  ParseNetworkOptions({this.headers});
+  ParseNetworkOptions({this.headers = const <String, String>{}});
 
-  final Map<String, dynamic> headers;
+  final Map<String, String> headers;
   // final ParseNetworkResponseType responseType;
 }
 
