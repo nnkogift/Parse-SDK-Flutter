@@ -25,7 +25,7 @@ class ParseInstallation extends ParseObject {
     keyParseVersion
   ];
 
-  static String? _currentInstallationId = '';
+  static String? _currentInstallationId;
 
   //Getters/setters
   Map<String, dynamic> get acl => super
@@ -55,7 +55,13 @@ class ParseInstallation extends ParseObject {
   String? get parseVersion => super.get<String?>(keyParseVersion)!;
 
   static Future<bool> isCurrent(ParseInstallation installation) async {
-    _currentInstallationId ??= (await _getFromLocalStore())?.installationId;
+    final ParseInstallation? tempInstallation = await _getFromLocalStore();
+    if (tempInstallation != null) {
+      _currentInstallationId = tempInstallation.installationId;
+    } else {
+      _currentInstallationId = null;
+    }
+
     return _currentInstallationId != null &&
         installation.installationId == _currentInstallationId;
   }
@@ -134,18 +140,15 @@ class ParseInstallation extends ParseObject {
 
     final String? installationJson =
         await coreStore.getString(keyParseStoreInstallation);
-    print(installationJson);
 
     if (installationJson != null) {
       final Map<String, dynamic> installationMap =
           json.decode(installationJson);
 
-      if (installationMap != null) {
-        return ParseInstallation()..fromJson(installationMap);
-      }
+      return ParseInstallation()..fromJson(installationMap);
     }
 
-    return Future<ParseInstallation?>.value(null);
+    return null;
   }
 
   /// Creates a installation for current device
@@ -234,7 +237,6 @@ class ParseInstallation extends ParseObject {
 
   ///Returns an <List<String>> containing all the channel names this device is subscribed to.
   Future<List<dynamic>> getSubscribedChannels() async {
-    print('getSubscribedChannels');
     final ParseResponse apiResponse =
         await ParseObject(keyClassInstallation).getObject(objectId!);
 

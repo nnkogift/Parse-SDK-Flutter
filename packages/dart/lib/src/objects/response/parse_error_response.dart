@@ -7,10 +7,7 @@ ParseResponse? buildErrorResponse(
     return null;
   }
 
-  print(apiResponse!.data);
-  final Map<String, dynamic> responseData = json.decode(apiResponse.data);
-
-  print(responseData.toString());
+  final Map<String, dynamic> responseData = json.decode(apiResponse!.data);
 
   response.error = ParseError(
       code: responseData[keyCode], message: responseData[keyError].toString());

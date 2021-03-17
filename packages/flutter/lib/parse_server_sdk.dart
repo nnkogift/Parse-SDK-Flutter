@@ -2,6 +2,7 @@ library flutter_parse_sdk_flutter;
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +80,11 @@ class Parse extends sdk.Parse
     }
 
     if (locale.isEmpty) {
-      _locale = Platform.localeName;
+      if (!sdk.parseIsWeb) {
+        _locale = Platform.localeName;
+      } else {
+        _locale = window.locale.toString();
+      }
     } else {
       _locale = locale;
     }

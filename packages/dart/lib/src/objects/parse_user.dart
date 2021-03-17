@@ -456,7 +456,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
     final CoreStore coreStore = ParseCoreData().getStore();
     final String? userJson = await coreStore.getString(keyParseStoreUser);
 
-    if (userJson != null) {
+    if (userJson != null && userJson.isNotEmpty) {
       final Map<String, dynamic> userMap = json.decode(userJson);
       if (cloneable != null) {
         return cloneable.clone(userMap);

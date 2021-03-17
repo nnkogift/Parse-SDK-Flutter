@@ -10,26 +10,22 @@ class ParseRelation<T extends ParseObject> {
   String? _targetClass;
   ParseObject? _parent;
   String? _key;
-  Set<T>? _objects = Set<T>();
+  Set<T>? _objects;
 
   QueryBuilder getQuery() {
     return QueryBuilder(ParseObject(_targetClass!));
   }
 
-  void add(T? object) {
-    if (object != null) {
-      _targetClass = object.parseClassName;
-      _objects!.add(object);
-      _parent?.addRelation(_key!, _objects!.toList());
-    }
+  void add(T object) {
+    _targetClass = object.parseClassName;
+    _objects!.add(object);
+    _parent?.addRelation(_key!, _objects!.toList());
   }
 
-  void remove(T? object) {
-    if (object != null) {
-      _targetClass = object.parseClassName;
-      _objects!.remove(object);
-      _parent?.removeRelation(_key!, _objects!.toList());
-    }
+  void remove(T object) {
+    _targetClass = object.parseClassName;
+    _objects!.remove(object);
+    _parent?.removeRelation(_key!, _objects!.toList());
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -39,6 +35,6 @@ class ParseRelation<T extends ParseObject> {
       };
 
   ParseRelation<T> fromJson(Map<String, dynamic> map) => ParseRelation<T>()
-    .._objects = parseDecode(map['objects'])
+    .._objects = parseDecode(map['objects']) ?? Set<T>()
     .._targetClass = map['className'];
 }

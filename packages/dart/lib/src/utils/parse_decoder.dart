@@ -72,11 +72,11 @@ dynamic? parseDecode(dynamic? value) {
             latitude: latitude.toDouble(), longitude: longitude.toDouble());
       case 'Relation':
         //RSM: TODO: Check logic to load Json from Relation
-        //print('Relation');
-        //print(map);
-        //print(map.values);
+        print(map);
+        print(map.values);
+        // ignore: always_specify_types
         //return ParseRelation().fromJson(map);
-        return null;
+       return null;
     }
   }
 

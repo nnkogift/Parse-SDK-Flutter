@@ -16,14 +16,14 @@ dependencies:
   #    ref: development
   #    path: packages/dart
 
-  parse_server_sdk:
-    git:
-      url: https://github.com/RodrigoSMarques/Parse-SDK-Flutter.git
-      ref: nullsafety
-      path: packages/dart
+#  parse_server_sdk:
+#    git:
+#      url: https://github.com/RodrigoSMarques/Parse-SDK-Flutter.git
+#      ref: nullsafety
+#      path: packages/dart
 
-  #parse_server_sdk:
-  #    path: ../dart
+  parse_server_sdk:
+      path: ../dart
 
   # Networking
   dio: ^4.0.0-beta7

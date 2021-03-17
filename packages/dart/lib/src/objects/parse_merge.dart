@@ -247,7 +247,6 @@ class ParseMergeTool {
         oldValue.add(objectToAdd);
       }
     }
-    print(oldValue);
     return oldValue;
   }
 }
