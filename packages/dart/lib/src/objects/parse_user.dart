@@ -121,8 +121,8 @@ class ParseUser extends ParseObject implements ParseCloneable {
             securityContext: ParseCoreData().securityContext);
 
     // We can't get the current user and session without a sessionId
-    if ((ParseCoreData().sessionId.isEmpty) && (sessionToken != null)) {
-      return Future<ParseResponse>.value(null);
+    if ((ParseCoreData().sessionId != null) && (sessionToken == null)) {
+      return null;
     }
 
     final Map<String, String> headers = <String, String>{};
@@ -317,7 +317,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// server. Will also delete the local user data unless
   /// deleteLocalUserData is false.
   Future<ParseResponse> logout({bool deleteLocalUserData = true}) async {
-    final String sessionId = ParseCoreData().sessionId;
+    final String sessionId = ParseCoreData().sessionId!;
 
     forgetLocalSession();
 
@@ -341,8 +341,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   }
 
   void forgetLocalSession() {
-    ParseCoreData().sessionId = '';
-    ParseCoreData().setSessionId('');
+    ParseCoreData().sessionId = null;
   }
 
   /// Delete the local user data.

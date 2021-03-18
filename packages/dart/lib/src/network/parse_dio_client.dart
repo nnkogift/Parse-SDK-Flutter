@@ -6,10 +6,9 @@ import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'dio_adapter_io.dart' if (dart.library.js) 'dio_adapter_js.dart';
 
 class ParseDioClient extends ParseClient {
-  ParseDioClient(
-      {bool? sendSessionId = false, SecurityContext? securityContext}) {
+  ParseDioClient({bool? sendSessionId, SecurityContext? securityContext}) {
     _client = _ParseDioClient(
-      sendSessionId: sendSessionId,
+      sendSessionId: sendSessionId ?? false,
       securityContext: securityContext,
     );
   }
@@ -128,14 +127,13 @@ class ParseDioClient extends ParseClient {
 
 /// Creates a custom version of DIO Client that has Parse Data Preset
 class _ParseDioClient with dio.DioMixin implements dio.Dio {
-  _ParseDioClient(
-      {bool? sendSessionId = false, SecurityContext? securityContext})
-      : _sendSessionId = sendSessionId {
+  _ParseDioClient({bool? sendSessionId, SecurityContext? securityContext})
+      : _sendSessionId = sendSessionId ?? false {
     options = dio.BaseOptions();
     httpClientAdapter = createHttpClientAdapter(securityContext);
   }
 
-  final bool? _sendSessionId;
+  final bool _sendSessionId;
   final String? _userAgent = '$keyLibraryName $keySdkVersion';
   ParseCoreData parseCoreData = ParseCoreData();
 
@@ -159,15 +157,15 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
       options.headers?[keyHeaderUserAgent] = _userAgent;
     }
     options.headers?[keyHeaderApplicationId] = parseCoreData.applicationId;
-    if ((_sendSessionId == true) &&
-        (parseCoreData.sessionId.isNotEmpty) &&
+    if (_sendSessionId &&
+        (parseCoreData.sessionId != null) &&
         (options.headers?[keyHeaderSessionToken] == null))
-      options.headers?[keyHeaderSessionToken] = parseCoreData.sessionId;
+      options.headers?[keyHeaderSessionToken] = parseCoreData.sessionId!;
 
-    if (parseCoreData.clientKey.isNotEmpty)
-      options.headers?[keyHeaderClientKey] = parseCoreData.clientKey;
-    if (parseCoreData.masterKey.isNotEmpty)
-      options.headers?[keyHeaderMasterKey] = parseCoreData.masterKey;
+    if (parseCoreData.clientKey != null)
+      options.headers?[keyHeaderClientKey] = parseCoreData.clientKey!;
+    if (parseCoreData.masterKey != null)
+      options.headers?[keyHeaderMasterKey] = parseCoreData.masterKey!;
 
     /// If developer wants to add custom headers, extend this class and add headers needed.
     if (additionalHeaders.isNotEmpty) {

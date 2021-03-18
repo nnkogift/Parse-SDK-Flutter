@@ -7,7 +7,7 @@ class CoreStoreSembastImp implements CoreStore {
   static CoreStoreSembastImp? _instance;
 
   static Future<CoreStore> getInstance(String dbPath,
-      {DatabaseFactory? factory, String? password = 'flutter_sdk'}) async {
+      {DatabaseFactory? factory, String password = 'flutter_sdk'}) async {
     if (_instance == null) {
       factory ??= !parseIsWeb ? databaseFactoryIo : databaseFactoryWeb;
       assert(() {
@@ -30,8 +30,7 @@ class CoreStoreSembastImp implements CoreStore {
         return true;
       }());
       final Database db = await factory.openDatabase(dbPath,
-          codec:
-              !parseIsWeb ? getXXTeaSembastCodec(password: password!) : null);
+          codec: !parseIsWeb ? getXXTeaSembastCodec(password: password) : null);
       _instance =
           CoreStoreSembastImp._internal(db, StoreRef<String, String>.main());
     }
@@ -39,12 +38,12 @@ class CoreStoreSembastImp implements CoreStore {
     return _instance!;
   }
 
-  final Database? _database;
-  final StoreRef<String, dynamic>? _store;
+  late final Database _database;
+  late final StoreRef<String, dynamic> _store;
 
   @override
   Future<bool> clear() {
-    final dynamic response = _store!.drop(_database!);
+    final dynamic response = _store.drop(_database);
     if (response is bool && response) {
       return Future<bool>.value(true);
     } else {
@@ -54,12 +53,12 @@ class CoreStoreSembastImp implements CoreStore {
 
   @override
   Future<bool> containsKey(String key) {
-    return _store!.record(key).exists(_database!);
+    return _store.record(key).exists(_database);
   }
 
   @override
   Future<dynamic?> get(String key) {
-    return _store!.record(key).get(_database!);
+    return _store.record(key).get(_database);
   }
 
   @override
@@ -89,31 +88,31 @@ class CoreStoreSembastImp implements CoreStore {
 
   @override
   Future<void> remove(String key) {
-    return _store!.record(key).delete(_database!);
+    return _store.record(key).delete(_database);
   }
 
   @override
   Future<void> setBool(String key, bool value) {
-    return _store!.record(key).put(_database!, value);
+    return _store.record(key).put(_database, value);
   }
 
   @override
   Future<void> setDouble(String key, double value) {
-    return _store!.record(key).put(_database!, value);
+    return _store.record(key).put(_database, value);
   }
 
   @override
   Future<void> setInt(String key, int value) {
-    return _store!.record(key).put(_database!, value);
+    return _store.record(key).put(_database, value);
   }
 
   @override
   Future<void> setString(String key, String value) {
-    return _store!.record(key).put(_database!, value);
+    return _store.record(key).put(_database, value);
   }
 
   @override
   Future<void> setStringList(String key, List<String> values) {
-    return _store!.record(key).put(_database!, values);
+    return _store.record(key).put(_database, values);
   }
 }

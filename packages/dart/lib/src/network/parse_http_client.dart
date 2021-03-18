@@ -8,7 +8,7 @@ import 'package:parse_server_sdk/parse_server_sdk.dart';
 class ParseHTTPClient extends ParseClient {
   ParseHTTPClient({bool? sendSessionId, SecurityContext? securityContext}) {
     _client = _ParseHTTPClient(
-      sendSessionId: sendSessionId,
+      sendSessionId: sendSessionId ?? false,
       securityContext: securityContext,
     );
   }
@@ -111,14 +111,15 @@ class ParseHTTPClient extends ParseClient {
 
 /// Creates a custom version of HTTP Client that has Parse Data Preset
 class _ParseHTTPClient extends http.BaseClient {
-  _ParseHTTPClient({bool? sendSessionId, SecurityContext? securityContext})
+  _ParseHTTPClient(
+      {required bool sendSessionId, SecurityContext? securityContext})
       : _sendSessionId = sendSessionId,
         _client = securityContext != null
             ? IOClient(HttpClient(context: securityContext))
             : http.Client();
 
   final http.Client? _client;
-  final bool? _sendSessionId;
+  final bool _sendSessionId;
   final String _userAgent = '$keyLibraryName $keySdkVersion';
   ParseCoreData parseCoreData = ParseCoreData();
   // ignore: always_specify_types
@@ -131,15 +132,15 @@ class _ParseHTTPClient extends http.BaseClient {
       request.headers[keyHeaderUserAgent] = _userAgent;
     }
     request.headers[keyHeaderApplicationId] = parseCoreData.applicationId;
-    if ((_sendSessionId == true) &&
-        (parseCoreData.sessionId.isNotEmpty) &&
-        (request.headers[keyHeaderSessionToken] == null))
-      request.headers[keyHeaderSessionToken] = parseCoreData.sessionId;
+    if (_sendSessionId &&
+        parseCoreData.sessionId != null &&
+        request.headers[keyHeaderSessionToken] == null)
+      request.headers[keyHeaderSessionToken] = parseCoreData.sessionId!;
 
-    if (parseCoreData.clientKey.isNotEmpty)
-      request.headers[keyHeaderClientKey] = parseCoreData.clientKey;
-    if (parseCoreData.masterKey.isNotEmpty)
-      request.headers[keyHeaderMasterKey] = parseCoreData.masterKey;
+    if (parseCoreData.clientKey != null)
+      request.headers[keyHeaderClientKey] = parseCoreData.clientKey!;
+    if (parseCoreData.masterKey != null)
+      request.headers[keyHeaderMasterKey] = parseCoreData.masterKey!;
 
     /// If developer wants to add custom headers, extend this class and add headers needed.
     if (additionalHeaders.isNotEmpty && additionalHeaders.isNotEmpty) {

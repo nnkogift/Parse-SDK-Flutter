@@ -43,14 +43,14 @@ class Parse extends sdk.Parse
     String appId,
     String serverUrl, {
     bool debug = false,
-    String appName = '',
-    String appVersion = '',
-    String appPackageName = '',
-    String locale = '',
-    String liveQueryUrl = '',
-    String clientKey = '',
-    String masterKey = '',
-    String sessionId = '',
+    String? appName,
+    String? appVersion,
+    String? appPackageName,
+    String? locale,
+    String? liveQueryUrl,
+    String? clientKey,
+    String? masterKey,
+    String? sessionId,
     bool autoSendSessionId = true,
     SecurityContext? securityContext,
     sdk.CoreStore? coreStore,
@@ -59,38 +59,15 @@ class Parse extends sdk.Parse
     sdk.ParseFileConstructor? parseFileConstructor,
     List<int>? liveListRetryIntervals,
     sdk.ParseConnectivityProvider? connectivityProvider,
-    String fileDirectory = '',
+    String? fileDirectory,
     Stream<void>? appResumedStream,
     sdk.ParseClientCreator? clientCreator,
   }) async {
-    String _locale = '';
-    String _fileDirectory = '';
-
-    if (appName.isEmpty || appVersion.isEmpty || appPackageName.isEmpty) {
+    if (appName == null || appVersion == null || appPackageName == null) {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      if (appName.isEmpty) {
-        appName = packageInfo.appName;
-      }
-      if (appVersion.isEmpty) {
-        appVersion = packageInfo.version;
-      }
-      if (appPackageName.isEmpty) {
-        appPackageName = packageInfo.packageName;
-      }
-    }
-
-    if (locale.isEmpty) {
-      if (!sdk.parseIsWeb) {
-        _locale = Platform.localeName;
-      } else {
-        _locale = window.locale.toString();
-      }
-    } else {
-      _locale = locale;
-    }
-
-    if (fileDirectory.isEmpty && !sdk.parseIsWeb) {
-      _fileDirectory = (await getTemporaryDirectory()).path;
+      appName ??= packageInfo.appName;
+      appVersion ??= packageInfo.version;
+      appPackageName ??= packageInfo.packageName;
     }
 
     return await super.initialize(
@@ -100,7 +77,8 @@ class Parse extends sdk.Parse
       appName: appName,
       appVersion: appVersion,
       appPackageName: appPackageName,
-      locale: _locale,
+      locale: locale ??
+          (sdk.parseIsWeb ? window.locale.toString() : Platform.localeName),
       liveQueryUrl: liveQueryUrl,
       clientKey: clientKey,
       masterKey: masterKey,
@@ -108,13 +86,14 @@ class Parse extends sdk.Parse
       autoSendSessionId: autoSendSessionId,
       securityContext: securityContext,
       coreStore: coreStore ??
-          await CoreStoreSharedPrefsImp.getInstance(password: masterKey),
+          await CoreStoreSharedPrefsImp.getInstance(),
       registeredSubClassMap: registeredSubClassMap,
       parseUserConstructor: parseUserConstructor,
       parseFileConstructor: parseFileConstructor,
       liveListRetryIntervals: liveListRetryIntervals,
       connectivityProvider: connectivityProvider ?? this,
-      fileDirectory: _fileDirectory,
+      fileDirectory: fileDirectory ??
+          (!sdk.parseIsWeb ? (await getTemporaryDirectory()).path : null),
       appResumedStream: appResumedStream ?? _appResumedStreamController.stream,
       clientCreator: clientCreator,
     );

@@ -32,9 +32,9 @@ void logAPIResponse(
 }
 
 void logRequest(
-    String appName, String className, String type, String uri, String body) {
+    String? appName, String className, String type, String uri, String body) {
   String requestString = ' \n';
-  String name = appName;
+  String name = appName != null ? '$appName ' : '';
   if (name.isNotEmpty) {
     name = '$appName ';
   }

@@ -18,14 +18,14 @@ class ParseCoreData {
     String appId,
     String serverUrl, {
     bool debug = false,
-    String appName = '',
-    String appVersion = '',
-    String appPackageName = '',
-    String locale = '',
-    String liveQueryUrl = '',
-    String masterKey = '',
-    String clientKey = '',
-    String sessionId = '',
+    String? appName,
+    String? appVersion,
+    String? appPackageName,
+    String? locale,
+    String? liveQueryUrl,
+    String? masterKey,
+    String? clientKey,
+    String? sessionId,
     bool autoSendSessionId = true,
     SecurityContext? securityContext,
     CoreStore? store,
@@ -34,7 +34,7 @@ class ParseCoreData {
     ParseFileConstructor? parseFileConstructor,
     List<int>? liveListRetryIntervals,
     ParseConnectivityProvider? connectivityProvider,
-    String fileDirectory = '',
+    String? fileDirectory,
     Stream<void>? appResumedStream,
     ParseClientCreator? clientCreator,
   }) async {
@@ -89,16 +89,16 @@ class ParseCoreData {
     }
   }
 
-  String appName = '';
-  String appVersion = '';
-  String appPackageName = '';
-  String applicationId = '';
-  String locale = '';
-  String serverUrl = '';
-  String liveQueryURL = '';
-  String masterKey = '';
-  String clientKey = '';
-  String sessionId = '';
+  String applicationId;
+  String serverUrl;
+  String? appName;
+  String? appVersion;
+  String? appPackageName;
+  String? locale;
+  String? liveQueryURL;
+  String? masterKey;
+  String? clientKey;
+  String? sessionId;
   bool autoSendSessionId = true;
   SecurityContext? securityContext;
   bool debug = false;
@@ -106,7 +106,7 @@ class ParseCoreData {
   ParseSubClassHandler? _subClassHandler;
   List<int>? liveListRetryIntervals;
   ParseConnectivityProvider? connectivityProvider;
-  String fileDirectory = '';
+  String? fileDirectory;
   Stream<void>? appResumedStream;
   ParseClientCreator clientCreator = (
           {bool? sendSessionId, SecurityContext? securityContext}) =>

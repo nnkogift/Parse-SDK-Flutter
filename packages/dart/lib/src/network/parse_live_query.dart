@@ -158,7 +158,7 @@ class LiveQueryClient {
 
   parse_web_socket.WebSocket? _webSocket;
   bool _debug = false;
-  bool? _sendSessionId;
+  late bool _sendSessionId;
   WebSocketChannel? _channel;
   String? _liveQueryURL;
   bool _connecting = false;
@@ -309,14 +309,14 @@ class LiveQueryClient {
       'applicationId': ParseCoreData().applicationId
     };
 
-    if (_sendSessionId! && ParseCoreData().sessionId.isNotEmpty) {
-      connectMessage['sessionToken'] = ParseCoreData().sessionId;
+    if (_sendSessionId && ParseCoreData().sessionId != null) {
+      connectMessage['sessionToken'] = ParseCoreData().sessionId!;
     }
 
-    if (ParseCoreData().clientKey.isNotEmpty)
-      connectMessage['clientKey'] = ParseCoreData().clientKey;
-    if (ParseCoreData().masterKey.isNotEmpty)
-      connectMessage['masterKey'] = ParseCoreData().masterKey;
+    if (ParseCoreData().clientKey != null)
+      connectMessage['clientKey'] = ParseCoreData().clientKey!;
+    if (ParseCoreData().masterKey != null)
+      connectMessage['masterKey'] = ParseCoreData().masterKey!;
 
     if (_debug) {
       print('$_printConstLiveQuery: ConnectMessage: $connectMessage');
@@ -351,8 +351,8 @@ class LiveQueryClient {
           'fields': keysToReturn
       }
     };
-    if (_sendSessionId! && ParseCoreData().sessionId.isNotEmpty) {
-      subscribeMessage['sessionToken'] = ParseCoreData().sessionId;
+    if (_sendSessionId && ParseCoreData().sessionId != null) {
+      subscribeMessage['sessionToken'] = ParseCoreData().sessionId!;
     }
 
     if (_debug) {
