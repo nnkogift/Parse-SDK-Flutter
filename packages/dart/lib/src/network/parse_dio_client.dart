@@ -137,7 +137,7 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
   final String? _userAgent = '$keyLibraryName $keySdkVersion';
   ParseCoreData parseCoreData = ParseCoreData();
 
-  Map<String, String> additionalHeaders = <String, String>{};
+  Map<String, String>? additionalHeaders;
 
   /// Overrides the call method for DIO Client and adds custom headers
   @override
@@ -168,8 +168,8 @@ class _ParseDioClient with dio.DioMixin implements dio.Dio {
       options.headers?[keyHeaderMasterKey] = parseCoreData.masterKey!;
 
     /// If developer wants to add custom headers, extend this class and add headers needed.
-    if (additionalHeaders.isNotEmpty) {
-      additionalHeaders.forEach(
+    if (additionalHeaders != null && additionalHeaders!.isNotEmpty) {
+      additionalHeaders!.forEach(
           (String key, String value) => options!.headers?[key] = value);
     }
 

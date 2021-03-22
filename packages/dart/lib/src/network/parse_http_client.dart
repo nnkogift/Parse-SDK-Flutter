@@ -123,7 +123,7 @@ class _ParseHTTPClient extends http.BaseClient {
   final String _userAgent = '$keyLibraryName $keySdkVersion';
   ParseCoreData parseCoreData = ParseCoreData();
   // ignore: always_specify_types
-  Map<String, dynamic> additionalHeaders = <String, dynamic>{};
+  Map<String, dynamic>? additionalHeaders;
 
   /// Overrides the call method for HTTP Client and adds custom headers
   @override
@@ -143,8 +143,8 @@ class _ParseHTTPClient extends http.BaseClient {
       request.headers[keyHeaderMasterKey] = parseCoreData.masterKey!;
 
     /// If developer wants to add custom headers, extend this class and add headers needed.
-    if (additionalHeaders.isNotEmpty && additionalHeaders.isNotEmpty) {
-      additionalHeaders
+    if (additionalHeaders != null && additionalHeaders!.isNotEmpty) {
+      additionalHeaders!
           .forEach((String key, dynamic value) => request.headers[key] = value);
     }
 

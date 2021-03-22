@@ -3,7 +3,7 @@ part of flutter_parse_sdk;
 // ignore_for_file: invalid_use_of_protected_member
 class ParseLiveList<T extends ParseObject> {
   ParseLiveList._(this._query, this._listeningIncludes, this._lazyLoading,
-      {List<String> preloadedColumns = const <String>[]})
+      {List<String>? preloadedColumns})
       : _preloadedColumns = preloadedColumns {
     _debug = isDebugEnabled();
   }
@@ -13,7 +13,7 @@ class ParseLiveList<T extends ParseObject> {
     bool? listenOnAllSubItems,
     List<String>? listeningIncludes,
     bool lazyLoading = true,
-    List<String> preloadedColumns = const <String>[],
+    List<String>? preloadedColumns,
   }) {
     final ParseLiveList<T> parseLiveList = ParseLiveList<T>._(
       _query,
@@ -34,7 +34,7 @@ class ParseLiveList<T extends ParseObject> {
   //The included Items, where LiveList should look for updates.
   final Map<String, dynamic> _listeningIncludes;
   final bool _lazyLoading;
-  final List<String> _preloadedColumns;
+  final List<String>? _preloadedColumns;
 
   List<ParseLiveListElement<T>> _list = <ParseLiveListElement<T>>[];
   StreamController<ParseLiveListEvent<T>>? _eventStreamController;
@@ -125,6 +125,7 @@ class ParseLiveList<T extends ParseObject> {
 
   Stream<ParseLiveListEvent<T>> get stream => _eventStreamController!.stream;
   Subscription<T>? _liveQuerySubscription;
+  // ignore: cancel_subscriptions
   StreamSubscription<LiveQueryClientEvent>? _liveQueryClientEventSubscription;
   final Future<void> _updateQueue = Future<void>.value();
 
@@ -133,7 +134,7 @@ class ParseLiveList<T extends ParseObject> {
     if (_debug!)
       print('ParseLiveList: lazyLoading is ${_lazyLoading ? 'on' : 'off'}');
     if (_lazyLoading) {
-      final List<String> keys = _preloadedColumns.toList();
+      final List<String> keys = _preloadedColumns?.toList() ?? <String>[];
       if (_lazyLoading && query.limiters.containsKey('order'))
         keys.addAll(
           query.limiters['order'].toString().split(',').map((String string) {
@@ -319,7 +320,7 @@ class ParseLiveList<T extends ParseObject> {
         } else {
           //recursion
           loadingNodes.add(_loadIncludes(includedObject,
-              oldObject: oldObject!.get(key), paths: paths[key]));
+              oldObject: oldObject?.get(key), paths: paths[key]));
           continue;
         }
       } else {

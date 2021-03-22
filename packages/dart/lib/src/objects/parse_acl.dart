@@ -69,7 +69,7 @@ class ParseACL {
   /// [true] or a role  that the user belongs to has read access.
   bool getReadAccess({required String userId}) {
     if (userId.isEmpty) {
-      throw 'cannot getReadAccess for null userId';
+      throw 'cannot getReadAccess for empty userId';
     }
 
     if (_permissionsById.containsKey(userId)) {
@@ -83,7 +83,7 @@ class ParseACL {
   ///Set whether the given user id is allowed to write this object.
   void setWriteAccess({required String userId, bool allowed = true}) {
     if (userId.isEmpty) {
-      throw 'cannot setWriteAccess for null userId';
+      throw 'cannot setWriteAccess for empty userId';
     }
     final bool readPermission = getReadAccess(userId: userId);
     _setPermissionsIfNonEmpty(
@@ -99,9 +99,6 @@ class ParseACL {
     if (userId.isEmpty) {
       throw 'cannot getWriteAccess for empty userId';
     }
-    //final _ACLPermissions permissions = _permissionsById[userId];
-    //return permissions.getWritePermission();
-
     if (_permissionsById.containsKey(userId)) {
       final _ACLPermissions _permissions = _permissionsById[userId]!;
       return _permissions.getWritePermission();

@@ -55,13 +55,7 @@ class ParseInstallation extends ParseObject {
   String? get parseVersion => super.get<String?>(keyParseVersion)!;
 
   static Future<bool> isCurrent(ParseInstallation installation) async {
-    final ParseInstallation? tempInstallation = await _getFromLocalStore();
-    if (tempInstallation != null) {
-      _currentInstallationId = tempInstallation.installationId;
-    } else {
-      _currentInstallationId = null;
-    }
-
+    _currentInstallationId ??= (await _getFromLocalStore())?.installationId;
     return _currentInstallationId != null &&
         installation.installationId == _currentInstallationId;
   }
@@ -245,7 +239,7 @@ class ParseInstallation extends ParseObject {
       return Future<List<dynamic>>.value(installation
           .get<List<dynamic>>('channels', defaultValue: <dynamic>[]));
     } else {
-      return Future<List<String>>.value(<String>[]);
+      return Future<List<dynamic>>.value(<dynamic>[]);
     }
   }
 }

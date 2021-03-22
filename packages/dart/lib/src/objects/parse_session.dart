@@ -11,7 +11,7 @@ class ParseSession extends ParseObject implements ParseCloneable {
         );
 
   @override
-  ParseSession clone(Map<String, dynamic>? map) {
+  ParseSession clone(Map<String, dynamic> map) {
     return fromJson(map);
   }
 

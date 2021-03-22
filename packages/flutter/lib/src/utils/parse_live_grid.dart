@@ -94,7 +94,7 @@ class _ParseLiveGridWidgetState<T extends sdk.ParseObject>
       bool? listenOnAllSubItems,
       List<String>? listeningIncludes,
       bool lazyLoading = true,
-      List<String> preloadedColumns = const <String>[]}) {
+      List<String>? preloadedColumns}) {
     sdk.ParseLiveList.create(
       query!,
       listenOnAllSubItems: listenOnAllSubItems,

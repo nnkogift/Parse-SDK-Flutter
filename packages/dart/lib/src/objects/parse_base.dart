@@ -8,7 +8,7 @@ abstract class ParseBase {
   final Map<String, dynamic> _savingChanges = Map<String, dynamic>();
 
   /// Stores all the values of a class
-  Map<String, dynamic>? _objectData = Map<String, dynamic>();
+  Map<String, dynamic> _objectData = Map<String, dynamic>();
 
   /// Returns [String] objectId
   String? get objectId => get<String?>(keyVarObjectId);
@@ -165,13 +165,12 @@ abstract class ParseBase {
 
   /// Sets all the objects variables
   @protected
-  void _setObjectData(Map<String, dynamic>? objectData) =>
+  void _setObjectData(Map<String, dynamic> objectData) =>
       _objectData = objectData;
 
   /// Returns the objects variables
   @protected
-  Map<String, dynamic> _getObjectData() =>
-      _objectData ?? Map<String, dynamic>();
+  Map<String, dynamic> _getObjectData() => _objectData;
 
   bool containsValue(Object value) {
     return _getObjectData().containsValue(value);

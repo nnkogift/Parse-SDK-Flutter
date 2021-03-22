@@ -5,13 +5,13 @@ class ParseFile extends ParseFileBase {
   ///
   /// {https://docs.parseplatform.org/rest/guide/#files/}
   ParseFile(this.file,
-      {String name = '',
-      String url = '',
+      {String? name,
+      String? url,
       bool? debug,
       ParseClient? client,
       bool? autoSendSessionId})
       : super(
-          name: file != null ? path.basename(file.path) : name,
+          name: file != null ? path.basename(file.path) : name!,
           url: url,
           debug: debug,
           client: client,
@@ -41,13 +41,13 @@ class ParseFile extends ParseFileBase {
 
   @override
   Future<ParseFile> download({ProgressCallback? progressCallback}) async {
-    if (url.isEmpty) {
+    if (url == null) {
       return this;
     }
     file = File('${ParseCoreData().fileDirectory}/$name');
     await file!.create();
     final ParseNetworkByteResponse response = await _client!.getBytes(
-      url,
+      url!,
       onReceiveProgress: progressCallback,
     );
     await file!.writeAsBytes(response.bytes!);
@@ -61,7 +61,7 @@ class ParseFile extends ParseFileBase {
     if (saved) {
       //Creates a Fake Response to return the correct result
       final Map<String, String> response = <String, String>{
-        'url': url,
+        'url': url!,
         'name': name
       };
       return handleResponse<ParseFile>(

@@ -6,7 +6,7 @@ abstract class ParseFileBase extends ParseObject {
   /// {https://docs.parseplatform.org/rest/guide/#files/}
   ParseFileBase(
       {required String name,
-      String url = '',
+      String? url,
       bool? debug,
       ParseClient? client,
       bool? autoSendSessionId})
@@ -22,10 +22,10 @@ abstract class ParseFileBase extends ParseObject {
   String get name => super.get<String>(keyVarName)!;
   set name(String name) => set<String>(keyVarName, name);
 
-  String get url => super.get<String>(keyVarURL)!;
-  set url(String url) => set<String>(keyVarURL, url);
+  String? get url => super.get<String?>(keyVarURL);
+  set url(String? url) => set<String?>(keyVarURL, url);
 
-  bool get saved => url.isNotEmpty;
+  bool get saved => url != null;
 
   @override
   Map<String, dynamic> toJson({
@@ -33,7 +33,7 @@ abstract class ParseFileBase extends ParseObject {
     bool forApiRQ = false,
     bool allowCustomObjectId = false,
   }) =>
-      <String, String>{'__type': keyFile, 'name': name, 'url': url};
+      <String, String>{'__type': keyFile, 'name': name, 'url': url ?? ''};
 
   @override
   String toString() => json.encode(toJson(full: true));

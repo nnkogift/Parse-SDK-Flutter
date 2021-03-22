@@ -122,9 +122,9 @@ class _ParseLiveListWidgetState<T extends sdk.ParseObject>
                           ParseLiveListWidget.defaultChildBuilder,
                       sizeFactor: animation,
                       duration: widget.duration,
-                      //TODO: // DO QUE SE TRATA
-                      //loadedData: () => event.object!,
-                      //preLoadedData: () => event.object!,
+                      //TODO: // NOT WORKING
+//                      loadedData: () => event.object,
+//                      preLoadedData: () => event.object!,
                     ),
                 duration: widget.duration);
             if (value.size > 0) {

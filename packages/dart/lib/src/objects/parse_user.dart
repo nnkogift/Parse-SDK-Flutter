@@ -121,7 +121,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
             securityContext: ParseCoreData().securityContext);
 
     // We can't get the current user and session without a sessionId
-    if ((ParseCoreData().sessionId != null) && (sessionToken == null)) {
+    if ((ParseCoreData().sessionId == null) && (sessionToken == null)) {
       return null;
     }
 
@@ -347,7 +347,7 @@ class ParseUser extends ParseObject implements ParseCloneable {
   /// Delete the local user data.
   Future<void> deleteLocalUserData() async {
     await unpin(key: keyParseStoreUser);
-    _setObjectData(null);
+    _setObjectData(<String, dynamic>{});
   }
 
   /// Sends a verification email to the users email address
@@ -416,17 +416,19 @@ class ParseUser extends ParseObject implements ParseCloneable {
 
   /// Removes a user from Parse Server locally and online
   Future<ParseResponse> destroy() async {
-//    if (objectId.isNotEmpty) {
-    try {
-      final Uri url = getSanitisedUri(_client!, '$_path/$objectId');
-      final ParseNetworkResponse response =
-          await _client!.delete(url.toString());
-      return await _handleResponse(
-          this, response, ParseApiRQ.destroy, _debug, parseClassName);
-    } on Exception catch (e) {
-      return handleException(e, ParseApiRQ.destroy, _debug, parseClassName);
+    if (objectId != null) {
+      try {
+        final Uri url = getSanitisedUri(_client!, '$_path/$objectId');
+        final ParseNetworkResponse response =
+            await _client!.delete(url.toString());
+        return await _handleResponse(
+            this, response, ParseApiRQ.destroy, _debug, parseClassName);
+      } on Exception catch (e) {
+        return handleException(e, ParseApiRQ.destroy, _debug, parseClassName);
+      }
     }
-//    }
+    return handleException(Exception('Invalid objectId'), ParseApiRQ.destroy,
+        _debug, parseClassName);
   }
 
   /// Gets a list of all users (limited return)

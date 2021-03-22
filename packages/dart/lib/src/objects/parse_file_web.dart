@@ -2,9 +2,9 @@ part of flutter_parse_sdk;
 
 class ParseWebFile extends ParseFileBase {
   ParseWebFile(this.file,
-      {String name = '',
-      String url = '',
-      bool? debug = false,
+      {required String name,
+      String? url,
+      bool? debug,
       ParseClient? client,
       bool? autoSendSessionId})
       : super(
@@ -19,12 +19,12 @@ class ParseWebFile extends ParseFileBase {
 
   @override
   Future<ParseWebFile> download({ProgressCallback? progressCallback}) async {
-    if (url.isNotEmpty) {
+    if (url == null) {
       return this;
     }
 
     final ParseNetworkByteResponse response = await _client!.getBytes(
-      url,
+      url!,
       onReceiveProgress: progressCallback,
     );
     file = Uint8List.fromList(response.bytes!);
@@ -37,7 +37,7 @@ class ParseWebFile extends ParseFileBase {
     if (saved) {
       //Creates a Fake Response to return the correct result
       final Map<String, String> response = <String, String>{
-        'url': url,
+        'url': url!,
         'name': name
       };
       return handleResponse<ParseWebFile>(
@@ -50,7 +50,7 @@ class ParseWebFile extends ParseFileBase {
 
     final Map<String, String> headers = <String, String>{
       HttpHeaders.contentTypeHeader:
-          mime(url.isEmpty ? name : url) ?? 'application/octet-stream',
+          mime(url ?? name) ?? 'application/octet-stream',
     };
     try {
       final String uri = ParseCoreData().serverUrl + '$_path';

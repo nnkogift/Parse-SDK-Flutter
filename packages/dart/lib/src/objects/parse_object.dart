@@ -11,7 +11,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
       : super() {
     parseClassName = className;
     _path = '$keyEndPointClasses$className';
-    _aggregatepath = '$keyEndPointAggregate$className';
+    _aggregatePath = '$keyEndPointAggregate$className';
 
     _debug = isDebugEnabled(objectLevelDebug: debug);
     _client = client ??
@@ -28,16 +28,16 @@ class ParseObject extends ParseBase implements ParseCloneable {
       ParseObject.clone(parseClassName)..fromJson(map);
 
   String _path = '';
-  String _aggregatepath = '';
+  String _aggregatePath = '';
   bool _debug = false;
   ParseClient? _client;
 
   /// Gets an object from the server using it's [String] objectId
-  Future<ParseResponse> getObject(String objectId) async {
+  Future<ParseResponse> getObject(String? objectId) async {
     try {
       String uri = _path;
 
-      if (objectId.isNotEmpty) {
+      if (objectId != null) {
         uri += '/$objectId';
       }
 
@@ -378,8 +378,8 @@ class ParseObject extends ParseBase implements ParseCloneable {
   ///
   /// If object is not saved remotely, set offlineOnly to true to avoid api calls.
   Future<ParseResponse> unset(String key, {bool offlineOnly = false}) async {
-    final dynamic object = _objectData![key];
-    _objectData!.remove(key);
+    final dynamic object = _objectData[key];
+    _objectData.remove(key);
     _unsavedChanges.remove(key);
     _savingChanges.remove(key);
 
@@ -396,7 +396,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
         final ParseResponse response = handleResponse<ParseObject>(
             this, result, ParseApiRQ.unset, _debug, parseClassName);
         if (!response.success) {
-          _objectData![key] = object;
+          _objectData[key] = object;
           _unsavedChanges[key] = object;
           _savingChanges[key] = object;
         } else {
@@ -404,7 +404,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
         }
       }
     } on Exception {
-      _objectData![key] = object;
+      _objectData[key] = object;
       _unsavedChanges[key] = object;
       _savingChanges[key] = object;
     }
@@ -431,7 +431,7 @@ class ParseObject extends ParseBase implements ParseCloneable {
   Future<ParseResponse> distinct<T extends ParseObject>(String query) async {
     try {
       final Uri url =
-          getSanitisedUri(_client!, '$_aggregatepath', query: query);
+          getSanitisedUri(_client!, '$_aggregatePath', query: query);
       final ParseNetworkResponse result = await _client!.get(url.toString());
       return handleResponse<T>(
           this, result, ParseApiRQ.query, _debug, parseClassName);

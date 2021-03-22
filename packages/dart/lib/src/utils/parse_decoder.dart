@@ -75,8 +75,8 @@ dynamic? parseDecode(dynamic? value) {
         print(map);
         print(map.values);
         // ignore: always_specify_types
-        //return ParseRelation().fromJson(map);
-       return null;
+        return ParseRelation.fromJson(map);
+      //return null;
     }
   }
 
