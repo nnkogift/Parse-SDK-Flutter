@@ -10,8 +10,8 @@ void main() {
       final MockClient client = MockClient();
 
       await Parse().initialize(
-        'appId',
-        'https://test.parse.com',
+        'tanesco-crm',
+        'https://tanescocrm-server.herokuapp.com',
         debug: true,
         // to prevent automatic detection
         fileDirectory: 'someDirectory',

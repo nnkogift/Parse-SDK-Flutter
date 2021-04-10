@@ -58,3 +58,6 @@ flutter:
           weight: 700
         - asset: fonts/Roboto/Roboto-Black.ttf
           weight: 900
+
+environment:
+  sdk: '>=2.10.0 <3.0.0'
